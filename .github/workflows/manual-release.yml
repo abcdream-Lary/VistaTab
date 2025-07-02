@@ -14,33 +14,33 @@ permissions:
 jobs:
   release:
     runs-on: ubuntu-latest
-    
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-      
+
     - name: Create release package
       run: |
         # 创建临时目录
-        mkdir -p release-temp/VistaTab
-        
-        # 复制需要的文件
-        cp -r css release-temp/VistaTab/
-        cp -r js release-temp/VistaTab/
-        cp -r icons release-temp/VistaTab/
-        cp manifest.json release-temp/VistaTab/
-        cp newtab.html release-temp/VistaTab/
-        cp README.md release-temp/VistaTab/
-        cp LICENSE release-temp/VistaTab/
-        
-        # 创建zip文件
+        mkdir -p release-temp
+
+        # 复制需要的文件到临时目录中（不含上层目录）
+        cp -r css release-temp/
+        cp -r js release-temp/
+        cp -r icons release-temp/
+        cp manifest.json release-temp/
+        cp newtab.html release-temp/
+        cp README.md release-temp/
+        cp LICENSE release-temp/
+
+        # 创建 zip 文件（不包含 VistaTab 文件夹）
         cd release-temp
-        zip -r ../VistaTab-${{ github.event.inputs.version }}.zip VistaTab/
+        zip -r ../VistaTab-${{ github.event.inputs.version }}.zip ./*
         cd ..
-        
+
         # 清理临时目录
         rm -rf release-temp
-        
+
     - name: Create Release
       uses: softprops/action-gh-release@v1
       with:
