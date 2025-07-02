@@ -8,6 +8,9 @@ on:
         required: true
         default: 'v1.0.0'
 
+permissions:
+  contents: write
+
 jobs:
   release:
     runs-on: ubuntu-latest
@@ -39,26 +42,16 @@ jobs:
         rm -rf release-temp
         
     - name: Create Release
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      uses: softprops/action-gh-release@v1
       with:
         tag_name: ${{ github.event.inputs.version }}
-        release_name: VistaTab ${{ github.event.inputs.version }}
+        name: VistaTab ${{ github.event.inputs.version }}
         body: |
           ## VistaTab ${{ github.event.inputs.version }}
 
           请手动编辑此发布说明以添加更新内容。
+        files: VistaTab-${{ github.event.inputs.version }}.zip
         draft: false
         prerelease: false
-        
-    - name: Upload Release Asset
-      uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./VistaTab-${{ github.event.inputs.version }}.zip
-        asset_name: VistaTab-${{ github.event.inputs.version }}.zip
-        asset_content_type: application/zip
