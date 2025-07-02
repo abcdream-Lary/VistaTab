@@ -2,8 +2,8 @@
 
 一个简洁美观、功能丰富的Chrome浏览器新标签页扩展，为你提供更好的浏览体验。
 
-![VistaTab](https://img.shields.io/badge/version-1.0-blue.svg)
-![License](https://img.shields.io/badge/license-MIT-green.svg)
+[![Version](https://img.shields.io/badge/version-1.0-blue.svg)](https://github.com/abcdream-Lary/VistaTab/releases)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/abcdream-Lary/VistaTab/blob/main/LICENSE)
 
 ## ✨ 特性
 
