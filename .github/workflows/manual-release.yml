@@ -1,0 +1,64 @@
+name: Manual Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: '版本号 (例如: v1.0.0)'
+        required: true
+        default: 'v1.0.0'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Create release package
+      run: |
+        # 创建临时目录
+        mkdir -p release-temp/VistaTab
+        
+        # 复制需要的文件
+        cp -r css release-temp/VistaTab/
+        cp -r js release-temp/VistaTab/
+        cp -r icons release-temp/VistaTab/
+        cp manifest.json release-temp/VistaTab/
+        cp newtab.html release-temp/VistaTab/
+        cp README.md release-temp/VistaTab/
+        cp LICENSE release-temp/VistaTab/
+        
+        # 创建zip文件
+        cd release-temp
+        zip -r ../VistaTab-${{ github.event.inputs.version }}.zip VistaTab/
+        cd ..
+        
+        # 清理临时目录
+        rm -rf release-temp
+        
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.event.inputs.version }}
+        release_name: VistaTab ${{ github.event.inputs.version }}
+        body: |
+          ## VistaTab ${{ github.event.inputs.version }}
+
+          请手动编辑此发布说明以添加更新内容。
+        draft: false
+        prerelease: false
+        
+    - name: Upload Release Asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./VistaTab-${{ github.event.inputs.version }}.zip
+        asset_name: VistaTab-${{ github.event.inputs.version }}.zip
+        asset_content_type: application/zip
