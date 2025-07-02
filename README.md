@@ -31,6 +31,12 @@
 - **数据同步**：设置自动保存到浏览器
 - **隐私保护**：所有数据本地存储，保护隐私
 
+### 🏗️ 代码架构
+- **模块化设计**：8个独立模块，职责清晰分离
+- **ES6语法**：使用现代JavaScript特性和模块系统
+- **事件驱动**：模块间通过事件系统通信
+- **可维护性**：易于扩展和维护的代码结构
+
 
 
 ## 🚀 安装
@@ -73,16 +79,35 @@ VistaTab/
 ├── css/
 │   └── newtab.css         # 样式文件
 ├── js/
-│   └── newtab.js          # 主要逻辑
+│   ├── main.js            # 主入口文件
+│   ├── newtab.js          # 原始文件备份（已重构）
+│   ├── modules/           # 模块化代码目录
+│   │   ├── config.js      # 配置和常量
+│   │   ├── utils.js       # 工具函数
+│   │   ├── storage.js     # 存储管理
+│   │   ├── search.js      # 搜索功能
+│   │   ├── quickAccess.js # 快捷网站管理
+│   │   ├── settings.js    # 设置面板
+│   │   └── modals.js      # 弹窗管理
+│   └── CODE_DOCUMENTATION.md # 代码文档说明
 ├── icons/                 # 图标文件
-└── README.md
+│   ├── favicon.ico
+│   ├── icon.png
+│   ├── icon_128.png
+│   ├── icon_width.png
+│   └── ...
+├── CHANGELOG.md           # 更新日志
+├── LICENSE                # 许可证
+└── README.md              # 项目说明
 ```
 
 ### 技术栈
 - **HTML5** - 页面结构
-- **CSS3** - 样式和动画
-- **Vanilla JavaScript** - 核心功能
-- **Chrome Extension API** - 浏览器集成
+- **CSS3** - 样式和动画，支持多主题
+- **JavaScript ES6+** - 模块化架构，类和异步编程
+- **ES6 Modules** - 代码模块化组织
+- **Chrome Extension API** - 浏览器集成和数据存储
+- **SVG** - 矢量图标 + 动态favicon获取
 
 ### 本地开发
 1. 克隆仓库
