@@ -172,6 +172,29 @@
         </div>
         
         <div class="settings-section">
+          <h3>数据管理</h3>
+          <div class="setting-group">
+            <div class="setting-row">
+              <div class="setting-name-container">
+                <span class="setting-name">导出常用网站</span>
+                <small class="setting-desc">将常用网站信息导出为JSON文件，方便备份和迁移</small>
+              </div>
+              <button id="exportSites" class="btn btn-refresh">导出</button>
+            </div>
+            <div class="setting-row">
+              <div class="setting-name-container">
+                <span class="setting-name">导入常用网站</span>
+                <small class="setting-desc">从JSON文件导入常用网站信息，会替换当前的网站列表</small>
+              </div>
+              <div class="import-container">
+                <input type="file" id="importSites" accept=".json" style="display: none;">
+                <button id="importSitesBtn" class="btn btn-refresh">导入</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-section">
           <h3>图标刷新</h3>
           <div class="setting-group">
             <div class="setting-row">

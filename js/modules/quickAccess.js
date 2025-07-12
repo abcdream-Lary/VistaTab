@@ -39,6 +39,9 @@ export class QuickAccessManager {
    * 加载并显示所有快捷访问网站
    */
   init() {
+    // 清理过期的图标缓存
+    this.cleanExpiredIconCache();
+    // 加载快捷访问网站
     this.loadQuickAccess();
   }
 
@@ -229,21 +232,36 @@ export class QuickAccessManager {
    */
   loadIcon(iconContainer, domain, siteName) {
     const cacheKey = `icon_${domain}`;
-    
+
     // 尝试从存储中获取缓存的图标
     chrome.storage.local.get([cacheKey], (result) => {
       if (result[cacheKey]) {
-        // 使用缓存的图标数据，不检查过期时间
-        // 只有当是首字母图标时才尝试重新加载
-        if (result[cacheKey].type === 'letter') {
-          // 是首字母图标，尝试重新加载真实图标
-          this.loadAndCacheIcon(iconContainer, domain, siteName, cacheKey);
+        const cachedIcon = result[cacheKey];
+        const now = Date.now();
+        const cacheAge = now - (cachedIcon.timestamp || 0);
+
+        // 缓存策略：
+        // - 真实图标缓存7天 (7 * 24 * 60 * 60 * 1000)
+        // - 首字母图标缓存1天，但会在后台尝试获取真实图标
+        const realIconMaxAge = 7 * 24 * 60 * 60 * 1000;
+        const letterIconMaxAge = 24 * 60 * 60 * 1000;
+
+        if (cachedIcon.type === 'image' && cacheAge < realIconMaxAge) {
+          // 使用缓存的真实图标（未过期）
+          this.displayCachedIcon(iconContainer, cachedIcon, siteName);
+        } else if (cachedIcon.type === 'letter' && cacheAge < letterIconMaxAge) {
+          // 显示缓存的首字母图标，但在后台尝试获取真实图标
+          this.displayCachedIcon(iconContainer, cachedIcon, siteName);
+          // 异步尝试获取真实图标
+          setTimeout(() => {
+            this.tryLoadRealIcon(iconContainer, domain, siteName, cacheKey);
+          }, 100);
         } else {
-          // 使用缓存的图标数据
-          this.displayCachedIcon(iconContainer, result[cacheKey], siteName);
+          // 缓存已过期，重新加载
+          this.loadAndCacheIcon(iconContainer, domain, siteName, cacheKey);
         }
       } else {
-        // 没有缓存或缓存数据不完整，加载新图标
+        // 没有缓存，加载新图标
         this.loadAndCacheIcon(iconContainer, domain, siteName, cacheKey);
       }
     });
@@ -288,6 +306,129 @@ export class QuickAccessManager {
   }
 
   /**
+   * 在后台尝试加载真实图标（不影响当前显示）
+   * @param {HTMLElement} iconContainer - 图标容器
+   * @param {string} domain - 域名
+   * @param {string} siteName - 网站名称
+   * @param {string} cacheKey - 缓存键
+   */
+  tryLoadRealIcon(iconContainer, domain, siteName, cacheKey) {
+    // 创建一个隐藏的图片元素来测试图标是否可用
+    const testImg = document.createElement('img');
+    testImg.style.display = 'none';
+
+    // 图标URL优先级列表
+    // 添加时间戳参数以控制缓存（每天更新一次）
+    const dayTimestamp = Math.floor(Date.now() / (24 * 60 * 60 * 1000));
+    const iconUrls = [
+      `https://${domain}/favicon.ico?t=${dayTimestamp}`,
+      `https://icons.duckduckgo.com/ip3/${domain}.ico`,
+      `https://www.google.com/s2/favicons?domain=${domain}&sz=64`,
+      `https://${domain}/apple-touch-icon.png?t=${dayTimestamp}`
+    ];
+
+    let currentUrlIndex = 0;
+
+    const tryNextUrl = () => {
+      if (currentUrlIndex >= iconUrls.length) {
+        // 所有URL都失败了，保持当前的首字母图标
+        return;
+      }
+
+      testImg.src = iconUrls[currentUrlIndex];
+      currentUrlIndex++;
+    };
+
+    testImg.onload = () => {
+      // 图标加载成功，更新显示和缓存
+      this.updateIconDisplay(iconContainer, testImg, siteName, cacheKey);
+      document.body.removeChild(testImg);
+    };
+
+    testImg.onerror = () => {
+      // 当前URL失败，尝试下一个
+      tryNextUrl();
+    };
+
+    // 添加到DOM中开始加载（虽然是隐藏的）
+    document.body.appendChild(testImg);
+    tryNextUrl();
+  }
+
+  /**
+   * 更新图标显示并缓存
+   * @param {HTMLElement} iconContainer - 图标容器
+   * @param {HTMLImageElement} imgElement - 图片元素
+   * @param {string} siteName - 网站名称
+   * @param {string} cacheKey - 缓存键
+   */
+  updateIconDisplay(iconContainer, imgElement, siteName, cacheKey) {
+    // 清空容器
+    iconContainer.innerHTML = '';
+    iconContainer.style.backgroundColor = '';
+    iconContainer.style.color = '';
+    iconContainer.style.fontWeight = '';
+
+    // 创建新的图片元素
+    const newImg = document.createElement('img');
+    newImg.src = imgElement.src;
+    newImg.alt = siteName;
+
+    // 添加错误处理
+    newImg.onerror = () => {
+      // 如果新图片加载失败，恢复首字母图标
+      this.showLetterIcon(iconContainer, siteName);
+    };
+
+    iconContainer.appendChild(newImg);
+
+    // 缓存图标
+    this.cacheIconFromImage(imgElement, cacheKey);
+  }
+
+  /**
+   * 从图片元素缓存图标
+   * @param {HTMLImageElement} imgElement - 图片元素
+   * @param {string} cacheKey - 缓存键
+   */
+  cacheIconFromImage(imgElement, cacheKey) {
+    try {
+      // 创建canvas将图片转为base64以缓存
+      const canvas = document.createElement('canvas');
+      canvas.width = 64;
+      canvas.height = 64;
+      const ctx = canvas.getContext('2d');
+
+      // 绘制图片到canvas
+      ctx.drawImage(imgElement, 0, 0, 64, 64);
+
+      // 转换为base64
+      const dataUrl = canvas.toDataURL('image/png', 0.8); // 使用0.8质量压缩
+
+      // 检查数据大小，避免存储过大的图标
+      if (dataUrl.length > 100000) { // 约100KB限制
+        console.warn('图标文件过大，跳过缓存:', cacheKey);
+        return;
+      }
+
+      // 缓存图标数据
+      chrome.storage.local.set({
+        [cacheKey]: {
+          type: 'image',
+          data: dataUrl,
+          timestamp: Date.now(),
+          size: dataUrl.length
+        }
+      }).catch(error => {
+        console.error('缓存图标失败:', error);
+      });
+
+    } catch (error) {
+      console.error('处理图标缓存时出错:', error);
+    }
+  }
+
+  /**
    * 加载并缓存图标
    * @param {HTMLElement} iconContainer - 图标容器
    * @param {string} domain - 域名
@@ -295,71 +436,79 @@ export class QuickAccessManager {
    * @param {string} cacheKey - 缓存键
    */
   loadAndCacheIcon(iconContainer, domain, siteName, cacheKey) {
+    // 图标URL优先级列表
+    // 添加时间戳参数以控制缓存（每天更新一次）
+    const dayTimestamp = Math.floor(Date.now() / (24 * 60 * 60 * 1000));
+    const iconUrls = [
+      `https://${domain}/favicon.ico?t=${dayTimestamp}`,
+      `https://icons.duckduckgo.com/ip3/${domain}.ico`,
+      `https://www.google.com/s2/favicons?domain=${domain}&sz=64`,
+      `https://${domain}/apple-touch-icon.png?t=${dayTimestamp}`
+    ];
+
+    let currentUrlIndex = 0;
     const iconImg = document.createElement('img');
-    
-    // 设置图标源 - 使用多个备选服务以提高可靠性
-    const faviconUrl = `https://${domain}/favicon.ico`;
-    iconImg.src = faviconUrl;
     iconImg.alt = siteName;
-    
-    // 添加加载错误处理
-    iconImg.onerror = () => {
-      // 备选1：DuckDuckGo 图标服务
-      iconImg.src = `https://icons.duckduckgo.com/ip3/${domain}.ico`;
-      
-      iconImg.onerror = () => {
-        // 备选2：Google 图标服务
-        iconImg.src = `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
-        
-        iconImg.onerror = () => {
-          // 备选3：尝试获取网站根目录的apple-touch-icon
-          iconImg.src = `https://${domain}/apple-touch-icon.png`;
-          
-          iconImg.onerror = () => {
-            // 所有备选都失败，显示首字母
-            iconImg.style.display = 'none';
-            const backgroundColor = getRandomColor(siteName);
-            this.showLetterIcon(iconContainer, siteName, backgroundColor);
-            
-            // 缓存首字母图标
-            chrome.storage.local.set({
-              [cacheKey]: {
-                type: 'letter',
-                backgroundColor: backgroundColor,
-                timestamp: Date.now()
-              }
-            });
-          };
-        };
-      };
-    };
-    
-    // 图片加载成功时缓存
-    iconImg.onload = () => {
-      // 创建canvas将图片转为base64以缓存
-      const canvas = document.createElement('canvas');
-      canvas.width = 64;
-      canvas.height = 64;
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(iconImg, 0, 0, 64, 64);
-      
-      try {
-        const dataUrl = canvas.toDataURL('image/png');
-        
-        // 缓存图标，添加时间戳
+
+    // 添加加载超时机制
+    let loadTimeout;
+
+    const tryNextUrl = () => {
+      if (currentUrlIndex >= iconUrls.length) {
+        // 所有URL都失败，显示首字母图标
+        iconImg.style.display = 'none';
+        const backgroundColor = getRandomColor(siteName);
+        this.showLetterIcon(iconContainer, siteName, backgroundColor);
+
+        // 缓存首字母图标
         chrome.storage.local.set({
           [cacheKey]: {
-            type: 'image',
-            data: dataUrl,
+            type: 'letter',
+            backgroundColor: backgroundColor,
             timestamp: Date.now()
           }
+        }).catch(error => {
+          console.error('缓存首字母图标失败:', error);
         });
-      } catch (e) {
-        console.error('无法缓存图标:', e);
+        return;
       }
+
+      // 清除之前的超时
+      if (loadTimeout) {
+        clearTimeout(loadTimeout);
+      }
+
+      // 设置5秒超时
+      loadTimeout = setTimeout(() => {
+        currentUrlIndex++;
+        tryNextUrl();
+      }, 5000);
+
+      iconImg.src = iconUrls[currentUrlIndex];
+      currentUrlIndex++;
     };
-    
+
+    // 图片加载成功
+    iconImg.onload = () => {
+      if (loadTimeout) {
+        clearTimeout(loadTimeout);
+      }
+
+      // 缓存成功加载的图标
+      this.cacheIconFromImage(iconImg, cacheKey);
+    };
+
+    // 图片加载失败，尝试下一个URL
+    iconImg.onerror = () => {
+      if (loadTimeout) {
+        clearTimeout(loadTimeout);
+      }
+      tryNextUrl();
+    };
+
+    // 开始加载
     iconContainer.appendChild(iconImg);
+    tryNextUrl();
   }
 
   /**
@@ -425,7 +574,7 @@ export class QuickAccessManager {
       chrome.storage.local.get(null, (result) => {
         // 找出所有图标缓存项
         const iconKeys = Object.keys(result).filter(key => key.startsWith('icon_'));
-        
+
         if (iconKeys.length > 0) {
           // 删除所有图标缓存
           chrome.storage.local.remove(iconKeys, () => {
@@ -439,6 +588,90 @@ export class QuickAccessManager {
           resolve();
         }
       });
+    });
+  }
+
+  /**
+   * 清理过期的图标缓存
+   * 定期清理过期的缓存数据，释放存储空间
+   */
+  cleanExpiredIconCache() {
+    chrome.storage.local.get(null, (result) => {
+      if (chrome.runtime.lastError) {
+        console.error('获取缓存数据失败:', chrome.runtime.lastError);
+        return;
+      }
+
+      const now = Date.now();
+      const expiredKeys = [];
+      const realIconMaxAge = 7 * 24 * 60 * 60 * 1000; // 7天
+      const letterIconMaxAge = 30 * 24 * 60 * 60 * 1000; // 30天（首字母图标保留更久）
+
+      // 检查所有图标缓存项
+      Object.keys(result).forEach(key => {
+        if (key.startsWith('icon_')) {
+          const iconData = result[key];
+          if (iconData && iconData.timestamp) {
+            const age = now - iconData.timestamp;
+            const maxAge = iconData.type === 'image' ? realIconMaxAge : letterIconMaxAge;
+
+            if (age > maxAge) {
+              expiredKeys.push(key);
+            }
+          } else {
+            // 没有时间戳的旧缓存数据也删除
+            expiredKeys.push(key);
+          }
+        }
+      });
+
+      // 删除过期的缓存
+      if (expiredKeys.length > 0) {
+        chrome.storage.local.remove(expiredKeys, () => {
+          console.log(`已清理 ${expiredKeys.length} 个过期的图标缓存`);
+        });
+      }
+
+      // 检查存储使用情况
+      chrome.storage.local.getBytesInUse(null, (bytesInUse) => {
+        const mbUsed = (bytesInUse / 1024 / 1024).toFixed(2);
+        console.log(`图标缓存使用存储空间: ${mbUsed} MB`);
+
+        // 如果使用空间超过5MB，清理一些较老的缓存
+        if (bytesInUse > 5 * 1024 * 1024) {
+          this.cleanOldCache();
+        }
+      });
+    });
+  }
+
+  /**
+   * 清理较老的缓存（当存储空间不足时）
+   */
+  cleanOldCache() {
+    chrome.storage.local.get(null, (result) => {
+      const iconEntries = [];
+
+      // 收集所有图标缓存项及其时间戳
+      Object.keys(result).forEach(key => {
+        if (key.startsWith('icon_') && result[key] && result[key].timestamp) {
+          iconEntries.push({
+            key: key,
+            timestamp: result[key].timestamp,
+            size: result[key].size || 0
+          });
+        }
+      });
+
+      // 按时间戳排序，删除最老的一半
+      iconEntries.sort((a, b) => a.timestamp - b.timestamp);
+      const keysToRemove = iconEntries.slice(0, Math.floor(iconEntries.length / 2)).map(entry => entry.key);
+
+      if (keysToRemove.length > 0) {
+        chrome.storage.local.remove(keysToRemove, () => {
+          console.log(`已清理 ${keysToRemove.length} 个较老的图标缓存以释放空间`);
+        });
+      }
     });
   }
 }

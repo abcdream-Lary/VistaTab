@@ -36,6 +36,9 @@ export class SettingsManager {
     this.saveHistoryToggle = document.getElementById('saveHistory');      // 搜索历史开关
     this.themeOptions = document.querySelectorAll('.theme-option');       // 主题选项
     this.refreshIconsBtn = document.getElementById('refreshIcons');       // 刷新图标按钮
+    this.exportSitesBtn = document.getElementById('exportSites');         // 导出网站按钮
+    this.importSitesBtn = document.getElementById('importSitesBtn');       // 导入网站按钮
+    this.importSitesInput = document.getElementById('importSites');       // 导入文件输入框
   }
 
   /**
@@ -101,7 +104,7 @@ export class SettingsManager {
       // 禁用按钮并更改文本
       this.refreshIconsBtn.textContent = '刷新中...';
       this.refreshIconsBtn.disabled = true;
-      
+
       try {
         await this.quickAccessManager.refreshAllIcons();
         showMessage('刷新成功', 'success');
@@ -112,6 +115,24 @@ export class SettingsManager {
         // 恢复按钮状态
         this.refreshIconsBtn.textContent = '刷新';
         this.refreshIconsBtn.disabled = false;
+      }
+    });
+
+    // 导出网站按钮
+    this.exportSitesBtn.addEventListener('click', () => {
+      this.exportSites();
+    });
+
+    // 导入网站按钮
+    this.importSitesBtn.addEventListener('click', () => {
+      this.importSitesInput.click();
+    });
+
+    // 导入文件选择
+    this.importSitesInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        this.importSites(file);
       }
     });
 
@@ -286,15 +307,170 @@ export class SettingsManager {
     const select = document.getElementById(selectId);
     const selectedOption = dropdown.querySelector('.selected-option');
     const options = dropdown.querySelectorAll('.dropdown-option');
-    
+
     // 更新select的值
     select.value = value;
-    
+
     // 更新显示文本
     options.forEach((option) => {
       if (option.dataset.value == value) {
         selectedOption.textContent = option.textContent;
       }
     });
+  }
+
+  /**
+   * 导出常用网站数据
+   * 将当前的常用网站列表导出为JSON文件
+   */
+  exportSites() {
+    try {
+      // 获取当前设置
+      const settings = this.storageManager.getAllSettings();
+      let sites = settings.quickSites || [];
+
+      // 导出前去重（以防存储中有重复数据）
+      const uniqueSites = [];
+      const seenUrls = new Set();
+
+      for (const site of sites) {
+        if (site && site.url && !seenUrls.has(site.url)) {
+          seenUrls.add(site.url);
+          uniqueSites.push(site);
+        }
+      }
+
+      // 创建导出数据对象
+      const exportData = {
+        version: '1.0',
+        exportTime: new Date().toISOString(),
+        sites: uniqueSites
+      };
+
+      // 转换为JSON字符串
+      const jsonString = JSON.stringify(exportData, null, 2);
+
+      // 创建Blob对象
+      const blob = new Blob([jsonString], { type: 'application/json' });
+
+      // 创建下载链接
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `VistaTab_常用网站_${new Date().toISOString().split('T')[0]}.json`;
+
+      // 触发下载
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+
+      // 释放URL对象
+      URL.revokeObjectURL(url);
+
+      // 显示导出结果
+      let message = `已导出 ${uniqueSites.length} 个网站`;
+      if (uniqueSites.length < sites.length) {
+        message += `（已去除 ${sites.length - uniqueSites.length} 个重复项）`;
+      }
+      showMessage(message, 'success');
+
+    } catch (error) {
+      console.error('导出失败:', error);
+      showMessage('导出失败', 'error');
+    }
+  }
+
+  /**
+   * 导入常用网站数据
+   * 从JSON文件导入常用网站列表
+   * @param {File} file - 要导入的JSON文件
+   */
+  importSites(file) {
+    // 验证文件类型
+    if (!file.type.includes('json')) {
+      showMessage('请选择JSON格式的文件', 'error');
+      return;
+    }
+
+    const reader = new FileReader();
+
+    reader.onload = (e) => {
+      try {
+        // 解析JSON数据
+        const jsonData = JSON.parse(e.target.result);
+
+        // 验证数据格式
+        if (!jsonData.sites || !Array.isArray(jsonData.sites)) {
+          showMessage('文件格式不正确，缺少sites数组', 'error');
+          return;
+        }
+
+        // 验证每个网站数据的格式并去重
+        const validSites = [];
+        const seenUrls = new Set(); // 用于检测重复URL
+        const seenNames = new Set(); // 用于检测重复名称
+
+        for (const site of jsonData.sites) {
+          if (site && typeof site === 'object' && site.name && site.url) {
+            // 确保URL格式正确
+            let url = site.url.trim();
+            if (!url.startsWith('http://') && !url.startsWith('https://')) {
+              url = 'https://' + url;
+            }
+
+            const name = site.name.trim();
+
+            // 检查是否重复（基于URL去重，因为URL是唯一标识）
+            if (!seenUrls.has(url)) {
+              seenUrls.add(url);
+              seenNames.add(name);
+
+              validSites.push({
+                name: name,
+                url: url
+              });
+            }
+          }
+        }
+
+        if (validSites.length === 0) {
+          showMessage('文件中没有有效的网站数据', 'error');
+          return;
+        }
+
+        // 显示去重信息
+        const originalCount = jsonData.sites.length;
+        const duplicateCount = originalCount - validSites.length;
+
+        // 更新设置（完全替换现有网站）
+        this.storageManager.updateSetting('quickSites', validSites);
+        this.storageManager.saveSettings();
+
+        // 重新加载快捷访问网站
+        this.quickAccessManager.loadQuickAccess();
+
+        // 显示导入结果消息
+        let message = `已导入 ${validSites.length} 个网站`;
+        if (duplicateCount > 0) {
+          message += `，已自动去除 ${duplicateCount} 个重复项`;
+        }
+        showMessage(message, 'success');
+
+      } catch (error) {
+        console.error('导入失败:', error);
+        showMessage('文件格式错误，请检查JSON格式', 'error');
+      }
+
+      // 清空文件输入框，允许重复选择同一文件
+      this.importSitesInput.value = '';
+    };
+
+    reader.onerror = () => {
+      showMessage('文件读取失败', 'error');
+      this.importSitesInput.value = '';
+    };
+
+    // 读取文件内容
+    reader.readAsText(file);
   }
 }
