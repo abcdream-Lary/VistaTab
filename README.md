@@ -7,7 +7,7 @@
 
 ## 预览
 
-<div align="center">
+<div align="left">
   <img src="Preview/Preview01.png" alt="VistaTab预览1" width="650px" />
   <br/><br/>
   <img src="Preview/Preview02.png" alt="VistaTab预览2" width="650px" />
