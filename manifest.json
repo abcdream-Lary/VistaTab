@@ -1,0 +1,25 @@
+{
+  "manifest_version": 3,
+  "name": "VistaTab",
+  "version": "1.0.0",
+  "key": "MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDkj5V37n2i0D5zye2D+VWrHyAzhEXJ8WWmsw/XsLUh/zMc0ywlt+aVut5IMBjQv/foFuqFqwfpUhyMH5T4rg9ww9sgokMntwxOWLC8r3llShA/foGcXxQjoEVmxRfci4MMeOOQ8uniTmzzdIqgnVhp/zxNkWJX6L6gg5eKlZ10CAFqDMhS+fUUejI0NLSHSH/SbW3rxDT4hrpeUSoshPcvONWHZXDPahURPVBhcNEnrujFLZf2yLuqv1b90gXE4xY8TjKTeO5geouerCQMrOn3vYlAPJaFocLg2AEfeOz3innwyqbphnjzjTCdYXISwHi3fVkiRsTNnnUKki31C1ExAgMBAAECggEADiXgLfQWlVM4JnE3sV1oAudylhXIPyOg8/RuFN8kmzXhm1VsDGqpjJesZkIJ6zQS26w9eKg5XWU+jKLw1QLrRELvZ8H7j7QKQDhHumpPRKiUwGVrjvsoszrayO2G2FlPc6BxD7olpaNOpbRPV3ld7XPF7xRChugKksOKiCLSRAoT34dpDi4sISsAjp8TkhDxASfkDZzh028vqzUSw7DQtQ/nJaKmFrH+yE3Eg5m5fwU659YBtw7+wIUWb/kjpfKOgJOilydepEiHUCMhl4PpTsvOsNC5tb2ZCuCtRRqPanOVOkKEd7o0xNoOGTmUKlf0nZGwZT6Nyfv0Isf2rBeStQKBgQD0gvQhr/wVaaz6+XNV0bmNHmN/MKrzSHjnzqXRisrX9hCHm0fNdPe+bddrLiXMiDsgnKkbYmSHdjfhC+g4RyjQrRBqCCddqIHTKaShe3jOSaTkUJht6jSOpwqqE8eOhG2toRt7FuzMcYPq3/pztQELGwMzS/ig464CMmC0wGFofQKBgQDvTMWJZdAmizmln5aWsJqaKUc1tSe2IKHL6Q7A8WRGQuJnGUOpCuXaXcJCssPnoGZ8umvPOhdSovDhPCKnAe9Qe+gn0GeuPfKoChoYfqaLPG/7ZcdObL3BTEMdmknkS0MPTox3CzXDeXMF9HMyDclWk5NwcmXdlMuyxUFtFgrdxQKBgQDEov/0i5P+IHNFjxELBlPjwnmf0yLX7gOV4KGH58eDcFcQx3cyKwwGME3a20z4tOJgMrzo0fMo4ZDEwo+pmsifMV8O9qm574cgq8/DMgoQVDdwicRcOMq1om64IpoM6kFOLk9saR5cuDmvzRqcrQc+yCWFvmYf9Zp+F8ef9Usg/QKBgDls0+6P5y6ItJHBRVLuGHusMjF6QohbNliHmgnFI8oUnN4e2vTC77vCSi7VVVvNSyrdVafKCfTDs0hptOsc9L/8rA553ZebuBKJMg/0vKSnITxUBUsVn0e2tFhzQQ4u3W3b7KtYnlNFXsvsCITXeBx1l6khWr6cyXEiEvxJkNv9AoGBAKJJNWN7aN7sRsr3UIE5SNkcTDEbBfCR8Xo5QTgw/1fGrsYFzfqohqoHHRjmUXw1EZaXP63T1jhGRQ2sgBJzLda72v0uXJ23aKuR+dzZV4xMOc2Hkssokqw9dZvE+PhYIlxK0sR5k6gLZZRP0k7X55yssAfsDcaOtcOoLCUn2z91",
+  "description": "简约的新标签页",
+  "icons": {
+    "16": "icons/icons_16.png",
+    "48": "icons/icons_48.png",
+    "128": "icons/icon_128.png"
+  },
+  "action": {
+    "default_icon": {
+      "16": "icons/icons_16.png",
+      "48": "icons/icons_48.png",
+      "128": "icons/icon_128.png"
+    }
+  },
+  "chrome_url_overrides": {
+    "newtab": "newtab.html"
+  },
+  "permissions": [
+    "storage"
+  ]
+}

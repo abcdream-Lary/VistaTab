@@ -1,0 +1,111 @@
+name: Release-Hub
+
+on:
+  workflow_dispatch:
+    inputs:
+      version_override:
+        description: '版本号覆盖（可选，默认使用manifest.json中的版本）'
+        required: false
+
+# 添加权限配置
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Get version from manifest
+        id: get_manifest_version
+        run: |
+          VERSION=$(grep -Po '"version": "\K[^"]*' manifest.json)
+          echo "MANIFEST_VERSION=$VERSION" >> $GITHUB_ENV
+
+      - name: Set final version
+        run: |
+          if [ -n "${{ github.event.inputs.version_override }}" ]; then
+            echo "VERSION=${{ github.event.inputs.version_override }}" >> $GITHUB_ENV
+          else
+            echo "VERSION=${{ env.MANIFEST_VERSION }}" >> $GITHUB_ENV
+          fi
+          echo "最终打包版本: v${{ env.VERSION }}"
+
+      # 添加从CHANGELOG.md提取版本日志的步骤
+      - name: Extract changelog for version
+        id: extract_changelog
+        run: |
+          echo "正在查找版本 ${{ env.VERSION }} 的更新日志"
+          echo "CHANGELOG.md 文件内容预览:"
+          head -n 20 CHANGELOG.md
+          
+          # 使用sed而不是awk来提取内容，可能更简单可靠
+          CHANGELOG_CONTENT=$(sed -n -E "/^## \[${{ env.VERSION }}\]( - [0-9]{4}-[0-9]{2}-[0-9]{2})?/,/^## \[/p" CHANGELOG.md | sed "1d;/^## \[/d")
+          
+          echo "提取的内容预览（前200个字符）:"
+          echo "$CHANGELOG_CONTENT" | head -c 200
+          
+          # 处理多行字符串，用于GitHub Actions
+          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+          echo "CHANGELOG<<$EOF" >> $GITHUB_ENV
+          echo "$CHANGELOG_CONTENT" >> $GITHUB_ENV
+          echo "$EOF" >> $GITHUB_ENV
+          
+          # 如果没有找到版本日志，设置默认消息
+          if [ -z "$CHANGELOG_CONTENT" ]; then
+            echo "警告: 没有找到版本 ${{ env.VERSION }} 的更新日志"
+            echo "CHANGELOG=没有找到版本 ${{ env.VERSION }} 的更新日志" >> $GITHUB_ENV
+          else
+            echo "成功提取更新日志"
+          fi
+
+      - name: Create build directory
+        run: mkdir -p build-temp
+
+      - name: Copy extension files
+        run: |
+          cp -r manifest.json newtab.html icons js css LICENSE CHANGELOG.md build-temp/
+
+      - name: Create zip archive
+        run: |
+          cd build-temp
+          zip -r "../VistaTab-v${{ env.VERSION }}.zip" *
+          cd ..
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: VistaTab-v${{ env.VERSION }}
+          path: ./VistaTab-v${{ env.VERSION }}.zip
+
+      # 添加删除已存在tag的步骤
+      - name: Delete existing tag if exists
+        run: |
+          git tag -d v${{ env.VERSION }} || true
+          git push origin :refs/tags/v${{ env.VERSION }} || true
+        continue-on-error: true
+
+      # 添加调试步骤
+      - name: Debug Release Info
+        run: |
+          echo "准备创建Release，版本号：${{ env.VERSION }}"
+          echo "使用的更新日志长度：$(echo "${{ env.CHANGELOG }}" | wc -c) 字符"
+          echo "更新日志预览："
+          echo "${{ env.CHANGELOG }}" | head -n 10
+          
+      # 使用softprops/action-gh-release替代已废弃的create-release和upload-release-asset
+      - name: Create Release and Upload Asset
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ env.VERSION }}
+          name: VistaTab v${{ env.VERSION }}
+          body: ${{ env.CHANGELOG }}
+          files: ./VistaTab-v${{ env.VERSION }}.zip
+          draft: false
+          prerelease: false
+          # 不再使用自动生成的发布说明，而是使用从CHANGELOG提取的内容
+          generate_release_notes: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 

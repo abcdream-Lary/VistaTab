@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>VistaTab</title>
+  <link rel="icon" href="icons/favicon.ico?v=2" type="image/x-icon">
+  <link rel="stylesheet" href="css/newtab.css">
+</head>
+<body>
+  <div class="container">
+    <!-- 设置按钮 - 右上角 -->
+    <div class="settings-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="3"></circle>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+      </svg>
+    </div>
+
+    <!-- 主要内容 -->
+    <div class="main-content">
+      <!-- LOGO -->
+      <div class="logo">
+        <img src="icons/icon_width.png" alt="VistaTab Logo" height="140" draggable="false">
+      </div>
+      
+      <!-- 搜索框 -->
+      <div class="search-box">
+        <input type="text" id="searchInput" placeholder="搜索或输入网址" autocomplete="off">
+        <button id="searchButton">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+        </button>
+      </div>
+      
+      <!-- 快捷访问区域 -->
+      <div class="quick-access">
+        <div class="quick-access-grid" id="quickAccessGrid">
+          <!-- 快捷访问项由JS动态添加 -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 设置面板 -->
+  <div class="settings-panel">
+    <div class="settings-content">
+      <div class="settings-header">
+        <h2>页面设置</h2>
+        <button id="closeSettings">×</button>
+      </div>
+      <div class="settings-body">
+        <div class="settings-section">
+          <h3>搜索引擎</h3>
+          <div class="setting-group">
+            <div class="setting-row">
+              <span class="setting-name">默认搜索引擎</span>
+              <div class="custom-dropdown" id="engineDropdown">
+                <div class="selected-option">Bing</div>
+                <div class="dropdown-options">
+                  <div class="dropdown-option" data-value="bing">Bing</div>
+                  <div class="dropdown-option" data-value="google">Google</div>
+                  <div class="dropdown-option" data-value="baidu">百度</div>
+                  <div class="dropdown-option" data-value="duckduckgo">DuckDuckGo</div>
+                  <div class="dropdown-option" data-value="sogou">搜狗</div>
+                  <div class="dropdown-option" data-value="ecosia">Ecosia</div>
+                  <div class="dropdown-option" data-value="qwant">Qwant</div>
+                  <div class="dropdown-option" data-value="startpage">Startpage</div>
+                </div>
+                <select id="searchEngine" style="display: none;">
+                  <option value="bing" selected>Bing</option>
+                  <option value="google">Google</option>
+                  <option value="baidu">百度</option>
+                  <option value="duckduckgo">DuckDuckGo</option>
+                  <option value="sogou">搜狗</option>
+                  <option value="ecosia">Ecosia</option>
+                  <option value="qwant">Qwant</option>
+                  <option value="startpage">Startpage</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="settings-section">
+          <h3>主题设置</h3>
+          <div class="setting-group">
+            <div class="theme-options">
+              <div class="theme-option" data-theme="light">
+                <div class="theme-preview light-theme"></div>
+                <div class="theme-name">浅色</div>
+              </div>
+              <div class="theme-option" data-theme="dark">
+                <div class="theme-preview dark-theme"></div>
+                <div class="theme-name">深色</div>
+              </div>
+              <div class="theme-option" data-theme="blue">
+                <div class="theme-preview blue-theme"></div>
+                <div class="theme-name">蓝色</div>
+              </div>
+              <div class="theme-option" data-theme="green">
+                <div class="theme-preview green-theme"></div>
+                <div class="theme-name">绿色</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="settings-section">
+          <h3>常用网站</h3>
+          <div class="setting-group">
+            <div class="setting-row">
+              <span class="setting-name">显示行数</span>
+              <div class="custom-dropdown" id="rowsDropdown">
+                <div class="selected-option">2行</div>
+                <div class="dropdown-options">
+                  <div class="dropdown-option" data-value="1">1</div>
+                  <div class="dropdown-option" data-value="2">2</div>
+                  <div class="dropdown-option" data-value="3">3</div>
+                  <div class="dropdown-option" data-value="4">4</div>
+                </div>
+                <select id="quickAccessRows" style="display: none;">
+                  <option value="1">1</option>
+                  <option value="2" selected>2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="settings-section">
+          <h3>数据管理</h3>
+          <div class="setting-group">
+            <div class="setting-row">
+              <div class="setting-name-container">
+                <span class="setting-name">导出常用网站</span>
+                <small class="setting-desc">将常用网站信息导出为JSON文件，方便备份和迁移</small>
+              </div>
+              <button id="exportSites" class="btn btn-refresh">导出</button>
+            </div>
+            <div class="setting-row">
+              <div class="setting-name-container">
+                <span class="setting-name">导入常用网站</span>
+                <small class="setting-desc">从JSON文件导入常用网站信息，会替换当前的网站列表</small>
+              </div>
+              <div class="import-container">
+                <input type="file" id="importSites" accept=".json" style="display: none;">
+                <button id="importSitesBtn" class="btn btn-refresh">导入</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <h3>图标刷新</h3>
+          <div class="setting-group">
+            <div class="setting-row">
+              <div class="setting-name-container">
+                <span class="setting-name">刷新所有网站图标</span>
+                <small class="setting-desc">如果网站图标显示不正常，点击刷新按钮重新获取所有图标</small>
+              </div>
+              <button id="refreshIcons" class="btn btn-refresh">刷新</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 添加网站弹窗 -->
+  <div class="modal" id="addSiteModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>添加网站</h3>
+        <span class="close-modal">&times;</span>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="siteName">网站名称</label>
+          <input type="text" id="siteName" placeholder="例如：百度" maxlength="20">
+        </div>
+        <div class="form-group">
+          <label for="siteUrl">网站地址</label>
+          <input type="text" id="siteUrl" placeholder="例如：https://www.baidu.com">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-cancel" id="cancelAddSite">取消</button>
+        <button class="btn btn-primary" id="confirmAddSite">添加</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 编辑网站弹窗 -->
+  <div class="modal" id="editSiteModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>编辑网站</h3>
+        <span class="close-modal">&times;</span>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="editSiteName">网站名称</label>
+          <input type="text" id="editSiteName" placeholder="例如：百度" maxlength="20">
+        </div>
+        <div class="form-group">
+          <label for="editSiteUrl">网站地址</label>
+          <input type="text" id="editSiteUrl" placeholder="例如：https://www.baidu.com">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-delete" id="deleteSite">删除</button>
+        <button class="btn btn-cancel" id="cancelEditSite">取消</button>
+        <button class="btn btn-primary" id="confirmEditSite">保存</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- 删除确认弹窗 -->
+  <div class="modal" id="confirmDeleteModal">
+    <div class="modal-content confirm-modal">
+      <div class="modal-header">
+        <h3>确认删除</h3>
+        <span class="close-modal">&times;</span>
+      </div>
+      <div class="modal-body">
+        <p>确定要删除 <span id="deleteItemName" class="highlight-text"></span> 吗？</p>
+        <p class="delete-warning">此操作无法撤销</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-cancel" id="cancelDelete">取消</button>
+        <button class="btn btn-delete" id="confirmDelete">删除</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
