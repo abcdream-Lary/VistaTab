@@ -5,6 +5,14 @@
 [![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/abcdream-Lary/VistaTab/releases)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/abcdream-Lary/VistaTab/blob/main/LICENSE)
 
+## 预览
+
+<div align="center">
+  <img src="Preview/Preview01.png" alt="VistaTab预览1" width="650px" />
+  <br/><br/>
+  <img src="Preview/Preview02.png" alt="VistaTab预览2" width="650px" />
+</div>
+
 ## 功能特性
 
 ### 搜索功能
