@@ -1,85 +1,87 @@
 /**
- * 配置和常量模块
- * 包含搜索引擎配置、默认网站、设置默认值等
- *
- * 这个模块集中管理所有的配置项和常量，便于统一维护和修改
- * 所有配置都使用export导出，供其他模块使用
+ * 配置文件
+ * 
+ * 这里存放了所有的默认配置和常量：
+ * - 搜索引擎列表
+ * - 默认网站
+ * - 默认设置
+ * - 图标颜色等
+ * 
+ * 修改这个文件就能改变程序的默认行为
  */
 
 /**
  * 搜索引擎URL配置
- * 定义各个搜索引擎的搜索URL模板
- * 使用时会将查询参数附加到URL后面
+ * 搜索时会把关键词拼到这些URL后面
  */
 export const searchEngines = {
-  bing: 'https://www.bing.com/search?q=',           // 微软必应搜索
-  google: 'https://www.google.com/search?q=',       // 谷歌搜索
-  baidu: 'https://www.baidu.com/s?wd=',             // 百度搜索
-  duckduckgo: 'https://duckduckgo.com/?q=',         // DuckDuckGo隐私搜索
-  sogou: 'https://www.sogou.com/web?query=',        // 搜狗搜索
-  ecosia: 'https://www.ecosia.org/search?q=',       // Ecosia环保搜索
-  qwant: 'https://www.qwant.com/?q=',               // Qwant欧洲搜索
-  startpage: 'https://www.startpage.com/do/search?q=' // Startpage隐私搜索
+  bing: 'https://www.bing.com/search?q=',           // 必应
+  google: 'https://www.google.com/search?q=',       // 谷歌
+  baidu: 'https://www.baidu.com/s?wd=',             // 百度
+  duckduckgo: 'https://duckduckgo.com/?q=',         // DuckDuckGo(注重隐私)
+  sogou: 'https://www.sogou.com/web?query=',        // 搜狗
+  ecosia: 'https://www.ecosia.org/search?q=',       // Ecosia(种树搜索引擎)
+  qwant: 'https://www.qwant.com/?q=',               // Qwant(欧洲搜索引擎)
+  startpage: 'https://www.startpage.com/do/search?q=' // Startpage(隐私搜索)
 };
 
 /**
  * 搜索引擎显示名称
- * 用于在UI界面中显示搜索引擎的友好名称
- * 键名必须与searchEngines中的键名一致
+ * 用在搜索引擎选择下拉菜单里
  */
 export const engineNames = {
-  bing: 'Bing',                    // 微软必应
-  google: 'Google',                // 谷歌
-  baidu: '百度',                   // 百度
-  duckduckgo: 'DuckDuckGo',        // DuckDuckGo
-  sogou: '搜狗',                   // 搜狗
-  ecosia: 'Ecosia',                // Ecosia
-  qwant: 'Qwant',                  // Qwant
-  startpage: 'Startpage'           // Startpage
+  bing: 'Bing',
+  google: 'Google',
+  baidu: '百度',
+  duckduckgo: 'DuckDuckGo',
+  sogou: '搜狗',
+  ecosia: 'Ecosia',
+  qwant: 'Qwant',
+  startpage: 'Startpage'
 };
 
 /**
- * 默认常用网站配置
- * 当用户首次使用或没有自定义网站时显示的默认网站列表
- * 每个网站对象包含name（显示名称）和url（网站地址）
+ * 默认网站列表
+ * 新用户第一次使用时会看到这些网站
  */
 export const defaultSites = [
-  { name: '百度', url: 'https://www.baidu.com' },        // 百度搜索
-  { name: 'Google', url: 'https://www.google.com' },     // 谷歌搜索
-  { name: '哔哩哔哩', url: 'https://www.bilibili.com' }, // B站视频
-  { name: 'GitHub', url: 'https://github.com' },         // 代码托管
-  { name: 'QQ邮箱', url: 'https://mail.qq.com' },        // QQ邮箱
-  { name: '网易邮箱', url: 'https://mail.163.com/' },    // 网易邮箱
+  { name: '百度', url: 'https://www.baidu.com' },
+  { name: 'Google', url: 'https://www.google.com' },
+  { name: '哔哩哔哩', url: 'https://www.bilibili.com' },  // B站
+  { name: 'GitHub', url: 'https://github.com' },          // 程序员社区
+  { name: 'QQ邮箱', url: 'https://mail.qq.com' },
+  { name: '网易邮箱', url: 'https://mail.163.com/' },
 ];
 
 /**
- * 应用默认设置配置
- * 定义应用的初始设置值，当用户首次使用时会使用这些默认值
- * 所有设置项都会保存到Chrome存储中
+ * 默认设置
+ * 第一次使用时的默认值，可以在设置面板修改
  */
 export const defaultSettings = {
   searchEngine: 'bing',        // 默认搜索引擎
-  theme: 'light',              // 默认主题（浅色）
-  quickSites: [],              // 快捷网站列表（初始为空，会使用defaultSites）
-  quickAccessRows: 2           // 快捷网站显示行数
+  theme: 'light',              // 默认主题(白天模式)
+  quickSites: [],              // 快捷网站(刚开始是空的，会用上面的defaultSites填充)
+  quickAccessRows: 2,          // 快捷网站显示几行
+  enableSuggestions: true,     // 开启搜索建议
+  enableIconAutoCache: true    // 开启图标缓存
 };
 
 /**
- * 网站图标颜色配置
- * 当无法获取网站favicon时，会使用这些颜色作为首字母图标的背景色
- * 颜色会根据网站名称的哈希值确定，确保同一网站始终使用相同颜色
+ * 图标颜色列表
+ * 当获取不到网站图标时，会用首字母 + 这些颜色作为替代
+ * 同一网站总是用相同的颜色，这样看起来一致
  */
 export const iconColors = [
-  '#4285F4', // Google Blue - 谷歌蓝
-  '#34A853', // Google Green - 谷歌绿
-  '#FBBC05', // Google Yellow - 谷歌黄
-  '#EA4335', // Google Red - 谷歌红
-  '#5851DB', // Instagram Purple - Instagram紫
-  '#E1306C', // Instagram Pink - Instagram粉
-  '#FD1D1D', // Instagram Orange - Instagram橙
-  '#F77737', // Instagram Yellow - Instagram黄
-  '#833AB4', // Instagram Purple - Instagram深紫
-  '#1DA1F2', // Twitter Blue - 推特蓝
-  '#0077B5', // LinkedIn Blue - 领英蓝
-  '#FF0000'  // YouTube Red - YouTube红
+  '#4285F4', // 谷歌蓝
+  '#34A853', // 谷歌绿
+  '#FBBC05', // 谷歌黄
+  '#EA4335', // 谷歌红
+  '#5851DB', // Instagram紫
+  '#E1306C', // Instagram粉
+  '#FD1D1D', // Instagram橙
+  '#F77737', // Instagram黄
+  '#833AB4', // Instagram深紫
+  '#1DA1F2', // 推特蓝
+  '#0077B5', // 领英蓝
+  '#FF0000'  // YouTube红
 ];

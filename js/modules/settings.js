@@ -36,7 +36,7 @@ export class SettingsManager {
     this.themeOptions = document.querySelectorAll('.theme-option');       // 主题选项
     this.refreshIconsBtn = document.getElementById('refreshIcons');       // 刷新图标按钮
     this.exportSitesBtn = document.getElementById('exportSites');         // 导出网站按钮
-    this.importSitesBtn = document.getElementById('importSitesBtn');       // 导入网站按钮
+    this.importSitesBtn = document.getElementById('importSitesBtn');      // 导入网站按钮
     this.importSitesInput = document.getElementById('importSites');       // 导入文件输入框
   }
 
@@ -46,6 +46,7 @@ export class SettingsManager {
   init() {
     this.initCustomDropdowns();
     this.initThemeOptions();
+    this.initSwitches();
     this.bindEvents();
     this.updateUI();
   }
@@ -59,6 +60,12 @@ export class SettingsManager {
     // 更新自定义下拉菜单
     this.updateCustomDropdown('rowsDropdown', 'quickAccessRows', settings.quickAccessRows || 2);
     this.updateCustomDropdown('engineDropdown', 'searchEngine', settings.searchEngine);
+    
+    // 更新开关状态
+    const enableSuggestionsSwitch = document.getElementById('enableSuggestions');
+    if (enableSuggestionsSwitch) {
+      enableSuggestionsSwitch.checked = settings.enableSuggestions !== false;
+    }
     
     // 应用主题
     this.applyTheme(settings.theme || 'light');
@@ -96,10 +103,10 @@ export class SettingsManager {
 
       try {
         await this.quickAccessManager.refreshAllIcons();
-        showMessage('刷新成功', 'success');
+        showMessage('图标已刷新');
       } catch (error) {
-        showMessage('刷新失败', 'error');
         console.error('刷新图标失败:', error);
+        showMessage('刷新图标失败');
       } finally {
         // 恢复按钮状态
         this.refreshIconsBtn.textContent = '刷新';
@@ -458,5 +465,24 @@ export class SettingsManager {
 
     // 读取文件内容
     reader.readAsText(file);
+  }
+
+  /**
+   * 初始化开关控件
+   */
+  initSwitches() {
+    // 搜索自动补全开关
+    const enableSuggestionsSwitch = document.getElementById('enableSuggestions');
+    if (enableSuggestionsSwitch) {
+      enableSuggestionsSwitch.addEventListener('change', () => {
+        this.storageManager.updateSetting('enableSuggestions', enableSuggestionsSwitch.checked);
+        this.storageManager.saveSettings();
+        
+        // 触发自定义事件，通知其他组件设置已变更
+        window.dispatchEvent(new CustomEvent('settingsChanged', { 
+          detail: { key: 'enableSuggestions', value: enableSuggestionsSwitch.checked }
+        }));
+      });
+    }
   }
 }

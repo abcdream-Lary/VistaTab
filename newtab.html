@@ -18,20 +18,23 @@
 
     <!-- 主要内容 -->
     <div class="main-content">
-      <!-- LOGO -->
-      <div class="logo">
-        <img src="icons/icon_width.png" alt="VistaTab Logo" height="140" draggable="false">
-      </div>
-      
-      <!-- 搜索框 -->
-      <div class="search-box">
-        <input type="text" id="searchInput" placeholder="搜索或输入网址" autocomplete="off">
-        <button id="searchButton">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="11" cy="11" r="8"></circle>
-            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-          </svg>
-        </button>
+      <!-- 固定内容区域 -->
+      <div class="fixed-content">
+        <!-- LOGO -->
+        <div class="logo">
+          <img src="icons/icon_width.png" alt="VistaTab Logo" height="140" draggable="false">
+        </div>
+        
+        <!-- 搜索框 -->
+        <div class="search-box">
+          <input type="text" id="searchInput" placeholder="搜索或输入网址" autocomplete="off">
+          <button id="searchButton">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+          </button>
+        </div>
       </div>
       
       <!-- 快捷访问区域 -->
@@ -79,6 +82,13 @@
                   <option value="startpage">Startpage</option>
                 </select>
               </div>
+            </div>
+            <div class="setting-row">
+              <span class="setting-name">搜索自动补全</span>
+              <label class="switch">
+                <input type="checkbox" id="enableSuggestions" checked>
+                <span class="slider"></span>
+              </label>
             </div>
           </div>
         </div>
@@ -155,7 +165,7 @@
         </div>
 
         <div class="settings-section">
-          <h3>图标刷新</h3>
+          <h3>图标管理</h3>
           <div class="setting-group">
             <div class="setting-row">
               <div class="setting-name-container">

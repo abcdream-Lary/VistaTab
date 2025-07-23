@@ -1,16 +1,14 @@
 /**
  * 主入口文件
- * 统一初始化和协调各个模块
- *
- * 这是VistaTab应用的主要入口点，负责：
- * - 导入所有功能模块
- * - 初始化应用程序
- * - 协调各模块之间的交互
- * - 处理全局事件和错误
- * - 提供应用程序的生命周期管理
+ * 
+ * 这是整个插件的大脑，负责：
+ * - 把各个模块组合在一起
+ * - 启动整个应用
+ * - 让不同模块之间能互相协作
+ * - 处理全局的事件和错误
  */
 
-// 导入所有功能模块
+// 导入各个功能模块
 import { StorageManager } from './modules/storage.js';
 import { SearchManager } from './modules/search.js';
 import { QuickAccessManager } from './modules/quickAccess.js';
@@ -20,58 +18,55 @@ import { showMessage } from './modules/utils.js';
 
 /**
  * VistaTab应用主类
- * 负责整个应用的初始化、模块协调和生命周期管理
+ * 这就像一个总指挥，协调各个模块一起工作
  */
 class VistaTabApp {
   /**
    * 构造函数
-   * 初始化所有模块管理器的引用为null
+   * 先把所有模块的引用都初始化为null
    */
   constructor() {
-    // 各个功能模块的管理器实例
-    this.storageManager = null;      // 存储管理器
-    this.searchManager = null;       // 搜索管理器
-    this.quickAccessManager = null;  // 快捷访问管理器
-    this.settingsManager = null;     // 设置管理器
-    this.modalManager = null;        // 弹窗管理器
+    // 各个功能模块的实例
+    this.storageManager = null;      // 负责数据存储
+    this.searchManager = null;       // 负责搜索功能
+    this.quickAccessManager = null;  // 负责快捷网站管理
+    this.settingsManager = null;     // 负责设置界面
+    this.modalManager = null;        // 负责弹窗效果
   }
 
   /**
-   * 初始化应用程序
-   * 按照依赖关系顺序初始化各个模块
-   * 处理初始化过程中可能出现的错误
+   * 初始化应用
+   * 按照模块间的依赖关系，一个一个地初始化它们
    */
   async init() {
     try {
-      // 第一步：初始化存储管理器（其他模块都依赖它）
+      // 第一步：先初始化存储模块（其他模块都要用它来读写数据）
       this.storageManager = new StorageManager();
 
-      // 第二步：加载应用数据（设置）
-      await this.storageManager.loadSettings();      // 加载用户设置
+      // 第二步：加载设置数据
+      await this.storageManager.loadSettings();
 
-      // 第三步：初始化各个功能模块（按依赖关系顺序）
+      // 第三步：初始化其他模块（按依赖顺序）
       this.quickAccessManager = new QuickAccessManager(this.storageManager);
       this.searchManager = new SearchManager(this.storageManager);
       this.settingsManager = new SettingsManager(this.storageManager, this.quickAccessManager);
       this.modalManager = new ModalManager(this.storageManager, this.quickAccessManager);
 
-      // 第四步：初始化各个模块的功能
-      this.quickAccessManager.init();  // 初始化快捷网站显示
-      this.searchManager.init();       // 初始化搜索功能
-      this.settingsManager.init();     // 初始化设置面板
-      this.modalManager.init();        // 初始化弹窗功能
+      // 第四步：让各个模块开始工作
+      this.quickAccessManager.init();  // 显示快捷网站
+      this.searchManager.init();       // 启用搜索框
+      this.settingsManager.init();     // 设置面板准备就绪
+      this.modalManager.init();        // 弹窗功能准备就绪
 
       // 第五步：绑定全局事件和快捷键
       this.bindGlobalEvents();
-
-      // 不再自动聚焦搜索框，让用户主动点击搜索框
       
-      console.log('VistaTab 应用初始化完成');
+      console.log('VistaTab 启动完成 👌');
 
     } catch (error) {
-      // 捕获并处理初始化过程中的任何错误
-      console.error('应用初始化失败:', error);
-      showMessage('应用初始化失败', 'error');
+      // 出错了就记录下来并显示
+      console.error('启动出错啦:', error);
+      showMessage('启动失败，请刷新重试', 'error');
     }
   }
 

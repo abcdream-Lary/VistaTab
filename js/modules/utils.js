@@ -136,18 +136,21 @@ export function clearInputError(inputElement) {
 /**
  * 显示临时消息
  * @param {string} message - 消息内容
- * @param {string} type - 消息类型 ('success', 'error', 'info')
+ * @param {string} type - 消息类型 ('success', 'error', 'info') - 现在忽略此参数，始终使用绿色成功样式
  * @param {number} duration - 显示时长（毫秒）
  */
 export function showMessage(message, type = 'success', duration = 2000) {
+  // 检查是否已存在消息，如果有则移除
+  const existingMessages = document.querySelectorAll('div[class^="message-"]');
+  existingMessages.forEach(msg => msg.remove());
+
   const messageDiv = document.createElement('div');
   messageDiv.textContent = message;
-  messageDiv.className = `message-${type}`;
+  messageDiv.className = `message-success`; // 始终使用success类
   document.body.appendChild(messageDiv);
   
-  // 设置样式
-  const backgroundColor = type === 'success' ? '#4CAF50' : 
-                         type === 'error' ? '#d9534f' : '#2196F3';
+  // 设置样式 - 统一使用绿色成功样式
+  const backgroundColor = '#4CAF50'; // 始终使用绿色
   
   messageDiv.style.position = 'fixed';
   messageDiv.style.bottom = '20px';

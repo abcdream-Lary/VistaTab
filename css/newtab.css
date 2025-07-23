@@ -147,13 +147,26 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   height: 100vh;
-  padding-top: 0;
-  margin-top: -50px;
   width: 100%;
   position: relative;
   z-index: 1;
+  overflow-y: auto;
+}
+
+/* 上部固定区域 - Logo和搜索框 */
+.fixed-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 25vh; /* 默认状态：两行时的顶部间距 */
+  width: 100%;
+  transition: padding-top 0.3s ease; /* 添加过渡效果 */
+}
+
+/* 多行状态 - 超过2行时的样式 */
+.multi-row .fixed-content {
+  padding-top: 23vh; /* 行数超过2行时减小顶部间距 */
 }
 
 /* LOGO */
@@ -250,9 +263,10 @@ body {
 /* 快捷访问区域 */
 .quick-access {
   width: 100%;
-  margin-top: 10px; /* 从默认值减小到10px，缩短与搜索框的距离 */
+  margin-top: 20px; /* 与搜索框保持一定距离 */
   position: relative;
-  z-index: 1; /* 确保在历史记录下方 */
+  z-index: 1; 
+  padding-bottom: 50px; /* 底部留出空间 */
 }
 
 .quick-access-grid {
@@ -700,6 +714,15 @@ input[type="color"] {
     max-width: 90%;
   }
   
+  .fixed-content {
+    padding-top: 15vh; /* 小屏幕上的默认顶部距离 */
+  }
+  
+  /* 小屏幕上的多行状态 */
+  .multi-row .fixed-content {
+    padding-top: 10vh;
+  }
+  
   .quick-access-grid {
     grid-template-columns: repeat(auto-fill, minmax(65px, 1fr));
     gap: 10px;
@@ -708,6 +731,21 @@ input[type="color"] {
   .settings-panel {
     width: 300px;
     right: -300px;
+  }
+}
+
+@media (max-height: 700px) {
+  .fixed-content {
+    padding-top: 12vh; /* 低矮屏幕上的默认顶部距离 */
+  }
+  
+  /* 低矮屏幕上的多行状态 */
+  .multi-row .fixed-content {
+    padding-top: 8vh;
+  }
+  
+  .logo {
+    margin-bottom: 30px;
   }
 }
 
@@ -1082,4 +1120,18 @@ input[type="color"] {
 body.dark-theme .quick-access-item[data-github] .quick-access-icon img {
   filter: invert(1); /* 反转颜色，黑色变成白色 */
   opacity: 0.9; /* 稍微降低不透明度使其看起来更柔和 */
+}
+
+/* 添加缓存统计样式 */
+.cache-stats-footer {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #e0e0e0;
+  text-align: center;
+}
+
+.cache-stats-text {
+  font-size: 12px;
+  color: #666;
+  margin: 0;
 }

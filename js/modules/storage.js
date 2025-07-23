@@ -1,82 +1,79 @@
 /**
- * 存储管理模块
- * 处理Chrome存储API相关的功能，包括设置保存和加载
- *
- * 这个模块封装了所有与数据持久化相关的操作：
- * - Chrome存储API的封装和错误处理
- * - 应用设置的保存和加载
- * - 数据的同步和本地存储
+ * 存储模块
+ * 
+ * 负责所有数据的保存和读取：
+ * - 用Chrome的storage API来存储数据
+ * - 保存和加载用户设置
+ * - 处理默认数据
+ * 
+ * 相当于整个应用的数据仓库
  */
 
 import { defaultSettings, defaultSites } from './config.js';
 
 /**
  * 存储管理类
- * 负责管理应用的所有数据存储操作
- * 使用Chrome的sync存储保存设置（可跨设备同步）
+ * 负责处理插件的数据存储
  */
 export class StorageManager {
   /**
    * 构造函数
-   * 初始化设置默认值
+   * 先初始化默认设置
    */
   constructor() {
-    // 使用展开运算符复制默认设置，避免直接修改原对象
+    // 复制一份默认设置，避免意外修改原始对象
     this.settings = { ...defaultSettings };
   }
 
   /**
-   * 从Chrome存储中加载应用设置
-   * 使用Chrome的sync存储，支持跨设备同步
-   * 如果没有保存的设置，会使用默认值并自动保存
+   * 从Chrome存储中加载设置
+   * 如果是第一次使用，就用默认设置
    *
-   * @returns {Promise<Object>} 返回加载的设置对象
-   * @throws {Error} 当Chrome存储API不可用时抛出错误
+   * @returns {Promise<Object>} 返回设置对象
    */
   async loadSettings() {
     return new Promise((resolve, reject) => {
-      // 检查Chrome存储API是否可用（在非扩展环境中可能不可用）
+      // 检查Chrome存储API是否可用
       if (!chrome.storage) {
-        console.error('Chrome存储API不可用');
+        console.error('Chrome存储API不可用，可能不是在插件环境运行');
         reject(new Error('Chrome存储API不可用'));
         return;
       }
 
-      // 从sync存储中获取设置数据
+      // 从存储中读取设置
       chrome.storage.sync.get(['settings'], (data) => {
-        // 检查是否有运行时错误
+        // 检查是否有错误
         if (chrome.runtime.lastError) {
-          console.error('加载设置时出错:', chrome.runtime.lastError);
+          console.error('读取设置时出错:', chrome.runtime.lastError);
           reject(chrome.runtime.lastError);
           return;
         }
 
-        // 如果存储中有设置数据，合并到当前设置中
+        // 如果有保存的设置，就用它覆盖默认设置
         if (data.settings) {
-          // 使用展开运算符合并设置，保留默认值的同时应用保存的设置
           this.settings = { ...this.settings, ...data.settings };
         }
 
-        // 特殊处理快捷网站：如果没有保存的网站或数组为空，使用默认网站
+        // 特殊处理：如果没有保存的网站，使用默认网站列表
         if (!this.settings.quickSites || !Array.isArray(this.settings.quickSites) || this.settings.quickSites.length === 0) {
-          // 复制默认网站数组，避免直接引用
+          // 复制一份默认网站列表，避免直接引用
           this.settings.quickSites = [...defaultSites];
 
-          // 立即保存默认网站到存储，确保下次加载时有数据
+          // 顺便把默认网站保存起来
           this.saveSettings().then(() => {
-            console.log('已保存默认网站到设置');
+            console.log('已保存默认网站列表');
           });
         }
 
-        // 返回加载完成的设置对象
+        // 返回最终的设置对象
         resolve(this.settings);
       });
     });
   }
 
   /**
-   * 保存设置
-   * @param {boolean} showMessage - 是否显示保存成功消息
+   * 保存设置到Chrome存储
+   * @param {boolean} showMessage - 是否显示"保存成功"的提示
    * @returns {Promise<void>}
    */
   async saveSettings(showMessage = false) {
@@ -93,7 +90,7 @@ export class StorageManager {
         }
         
         if (showMessage) {
-          // 这里可以触发一个事件来显示消息，而不是直接操作DOM
+          // 触发一个事件来显示保存成功的消息
           window.dispatchEvent(new CustomEvent('showMessage', {
             detail: { message: '设置已保存', type: 'success' }
           }));
