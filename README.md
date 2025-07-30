@@ -45,6 +45,8 @@
 
 ## 安装方法
 
+[Microsoft Edge](https://microsoftedge.microsoft.com/addons/detail/oldkkpidfnnclmpigkdkaaechkedfdch)
+
 1. 从GitHub下载zip文件
 2. 开启浏览器扩展页面的开发者模式
    - Chrome: `chrome://extensions/`
