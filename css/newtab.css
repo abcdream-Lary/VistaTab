@@ -90,6 +90,72 @@ body.green-theme {
   --dropdown-selected-text: #4caf50;
 }
 
+/* 紫色主题 */
+body.purple-theme {
+  --bg-color: #f3e5f5;
+  --text-color: #333;
+  --card-bg: #ffffff;
+  --card-shadow: 0 2px 12px rgba(156, 39, 176, 0.15);
+  --border-color: #e1bee7;
+  --highlight-color: #9c27b0;
+  --secondary-bg: #faf0fc;
+  --btn-primary-bg: #9c27b0;
+  --btn-primary-text: white;
+  --btn-cancel-bg: #f3e5f5;
+  --btn-cancel-text: #333;
+  --input-bg: white;
+  --input-border: #e1bee7;
+  --input-text: #333;
+  --dropdown-bg: white;
+  --dropdown-hover: #f3e5f5;
+  --dropdown-selected: #e1bee7;
+  --dropdown-selected-text: #9c27b0;
+}
+
+/* 橙色主题 */
+body.orange-theme {
+  --bg-color: #fff3e0;
+  --text-color: #333;
+  --card-bg: #ffffff;
+  --card-shadow: 0 2px 12px rgba(255, 152, 0, 0.15);
+  --border-color: #ffe0b2;
+  --highlight-color: #ff9800;
+  --secondary-bg: #fffbf5;
+  --btn-primary-bg: #ff9800;
+  --btn-primary-text: white;
+  --btn-cancel-bg: #fff3e0;
+  --btn-cancel-text: #333;
+  --input-bg: white;
+  --input-border: #ffe0b2;
+  --input-text: #333;
+  --dropdown-bg: white;
+  --dropdown-hover: #fff3e0;
+  --dropdown-selected: #ffe0b2;
+  --dropdown-selected-text: #ff9800;
+}
+
+/* 粉色主题 */
+body.pink-theme {
+  --bg-color: #fce4ec;
+  --text-color: #333;
+  --card-bg: #ffffff;
+  --card-shadow: 0 2px 12px rgba(233, 30, 99, 0.15);
+  --border-color: #f8bbd0;
+  --highlight-color: #e91e63;
+  --secondary-bg: #fef5f8;
+  --btn-primary-bg: #e91e63;
+  --btn-primary-text: white;
+  --btn-cancel-bg: #fce4ec;
+  --btn-cancel-text: #333;
+  --input-bg: white;
+  --input-border: #f8bbd0;
+  --input-text: #333;
+  --dropdown-bg: white;
+  --dropdown-hover: #fce4ec;
+  --dropdown-selected: #f8bbd0;
+  --dropdown-selected-text: #e91e63;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -105,7 +171,7 @@ body {
   justify-content: center;
   position: relative;
   overflow: hidden;
-  transition: background-color 0.3s;
+  transition: background-color 0.5s ease, color 0.5s ease;
 }
 
 .container {
@@ -115,17 +181,117 @@ body {
   position: relative;
 }
 
-/* 设置图标 - 右上角 */
-.settings-icon {
+/* 右上角控制区域 - 天气和设置 */
+.top-right-controls {
   position: fixed;
   top: 20px;
   right: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  z-index: 100;
+}
+
+/* 天气组件 */
+.weather-widget {
+  background-color: var(--card-bg);
+  border-radius: 21px;
+  min-width: 70px;
+  height: 42px;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--card-shadow);
+  cursor: pointer;
+  transition: all 0.3s;
+  position: relative;
+  gap: 4px;
+}
+
+.weather-widget:hover {
+  background-color: #fff;
+  box-shadow: 0 3px 15px rgba(0, 0, 0, 0.2);
+  transform: scale(1.05);
+}
+
+body.dark-theme .weather-widget:hover {
+  background-color: #3d3d3d;
+}
+
+.weather-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-color);
+  transition: all 0.3s;
+  flex-shrink: 0;
+}
+
+.weather-info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.weather-temp {
+  font-size: 13px;
+  font-weight: bold;
+  color: var(--text-color);
+  white-space: nowrap;
+}
+
+.weather-desc {
+  font-size: 11px;
+  color: var(--text-color);
+  opacity: 0.8;
+  white-space: nowrap;
+}
+
+.weather-widget:hover .weather-icon {
+  display: flex;
+}
+
+.weather-widget:hover .weather-info {
+  display: flex;
+}
+
+.weather-loading {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+
+.weather-loading.active {
+  display: flex;
+}
+
+.loading-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--border-color);
+  border-top-color: var(--highlight-color);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* 设置图标 - 配合天气组件使用 */
+.settings-icon {
   width: 42px;
   height: 42px;
   cursor: pointer;
   color: var(--text-color);
   transition: all 0.3s;
-  z-index: 100;
   background-color: var(--card-bg);
   padding: 8px;
   border-radius: 50%;
@@ -140,6 +306,11 @@ body {
   background-color: #fff;
   box-shadow: 0 3px 15px rgba(0, 0, 0, 0.2);
   transform: scale(1.05);
+}
+
+body.dark-theme .settings-icon:hover {
+  color: #e0e0e0;
+  background-color: #3d3d3d;
 }
 
 /* 主要内容区 */
@@ -208,8 +379,22 @@ body {
   border-radius: var(--border-radius-large);
   background-color: var(--input-bg);
   border: 1px solid var(--input-border);
-  z-index: 100; /* 增加z-index确保在快捷访问区域之上 */
-  transition: transform 0.2s ease, box-shadow 0.3s ease; /* 添加动画效果 */
+  z-index: 100;
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
+}
+
+/* 搜索建议容器动画 */
+.suggestion-container {
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  pointer-events: none;
+}
+
+.suggestion-container.show {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
 }
 
 /* 添加搜索框焦点动画 */
@@ -270,8 +455,8 @@ body {
 }
 
 .quick-access-grid {
-  display: grid;
-  grid-template-columns: repeat(10, 65px);
+  display: flex;
+  flex-wrap: wrap;
   gap: 8px 12px;
   width: 100%;
   justify-content: center;
@@ -407,6 +592,47 @@ body {
   margin: 0;
 }
 
+/* 设置导航栏 */
+.settings-nav {
+  display: flex;
+  background-color: var(--secondary-bg);
+  padding: 8px 10px;
+  gap: 4px;
+}
+
+.settings-nav-item {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 12px;
+  background: none;
+  border: none;
+  border-radius: 10px;
+  color: var(--text-color);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  opacity: 0.7;
+}
+
+.settings-nav-item:hover {
+  opacity: 1;
+  background-color: var(--dropdown-hover);
+}
+
+.settings-nav-item.active {
+  opacity: 1;
+  background-color: var(--highlight-color);
+  color: white;
+  font-weight: 500;
+}
+
+.settings-nav-item svg {
+  flex-shrink: 0;
+}
+
 #closeSettings {
   background: none;
   color: var(--text-color);
@@ -429,6 +655,7 @@ body {
 
 .settings-body {
   padding: 15px;
+  padding-bottom: 0;
   flex-grow: 1;
   overflow-y: auto;
   scrollbar-width: none; /* Firefox */
@@ -724,7 +951,6 @@ input[type="color"] {
   }
   
   .quick-access-grid {
-    grid-template-columns: repeat(auto-fill, minmax(65px, 1fr));
     gap: 10px;
   }
   
@@ -751,7 +977,7 @@ input[type="color"] {
 
 @media (max-width: 1000px) {
   .quick-access-grid {
-    grid-template-columns: repeat(auto-fit, minmax(65px, 75px));
+    gap: 8px;
   }
 }
 
@@ -1047,8 +1273,8 @@ input[type="color"] {
 .theme-options {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
-  justify-content: center;
+  gap: 18px;
+  justify-content: flex-start;
 }
 
 .theme-option {
@@ -1101,6 +1327,18 @@ input[type="color"] {
   background-color: #e8f5e9;
 }
 
+.purple-theme {
+  background-color: #f3e5f5;
+}
+
+.orange-theme {
+  background-color: #fff3e0;
+}
+
+.pink-theme {
+  background-color: #fce4ec;
+}
+
 .theme-name {
   font-size: 12px;
   color: var(--text-color);
@@ -1128,6 +1366,52 @@ body.dark-theme .quick-access-item[data-github] .quick-access-icon img {
   padding-top: 10px;
   border-top: 1px solid #e0e0e0;
   text-align: center;
+}
+
+/* 设置面板底部关于区域 - 固定在底部 */
+.settings-about {
+  border-top: 1px solid var(--border-color);
+  padding: 12px 15px;
+  background-color: var(--secondary-bg);
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+}
+
+.about-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.about-info .setting-name {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.about-info .setting-desc {
+  font-size: 11px;
+  color: var(--text-color);
+  opacity: 0.6;
+}
+
+.github-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--highlight-color);
+  font-size: 12px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+
+.github-link:hover {
+  opacity: 0.8;
+  text-decoration: underline;
 }
 
 .cache-stats-text {

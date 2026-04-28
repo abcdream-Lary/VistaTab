@@ -40,7 +40,7 @@ export class StorageManager {
         return;
       }
 
-      // 从存储中读取设置
+      // 从存储中读取设置和壁纸数据
       chrome.storage.sync.get(['settings'], (data) => {
         // 检查是否有错误
         if (chrome.runtime.lastError) {
@@ -124,5 +124,43 @@ export class StorageManager {
    */
   getAllSettings() {
     return { ...this.settings };
+  }
+
+  /**
+   * 监控存储空间使用情况
+   * 当存储接近配额限制时发出警告
+   *
+   * @returns {Promise<{used: number, quota: number, percentage: number}>} 存储使用信息
+   */
+  async checkStorageUsage() {
+    return new Promise((resolve) => {
+      if (!chrome.storage) {
+        resolve({ used: 0, quota: 0, percentage: 0 });
+        return;
+      }
+
+      chrome.storage.sync.getBytesInUse(null, (bytesInUse) => {
+        if (chrome.runtime.lastError) {
+          console.warn('获取存储使用情况失败:', chrome.runtime.lastError);
+          resolve({ used: 0, quota: 0, percentage: 0 });
+          return;
+        }
+
+        // Chrome sync storage 配额约为 100KB
+        const quota = 100 * 1024;
+        const percentage = Math.round((bytesInUse / quota) * 100);
+
+        // 当使用超过80%时发出警告
+        if (percentage > 80) {
+          console.warn(`⚠️ 存储空间使用率过高: ${percentage}% (${bytesInUse} bytes / ${quota} bytes)`);
+        }
+
+        resolve({
+          used: bytesInUse,
+          quota: quota,
+          percentage: percentage
+        });
+      });
+    });
   }
 }

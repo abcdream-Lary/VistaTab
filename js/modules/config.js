@@ -58,12 +58,14 @@ export const defaultSites = [
  * 第一次使用时的默认值，可以在设置面板修改
  */
 export const defaultSettings = {
-  searchEngine: 'bing',        // 默认搜索引擎
-  theme: 'light',              // 默认主题(白天模式)
-  quickSites: [],              // 快捷网站(刚开始是空的，会用上面的defaultSites填充)
-  quickAccessRows: 2,          // 快捷网站显示几行
-  enableSuggestions: true,     // 开启搜索建议
-  enableIconAutoCache: true    // 开启图标缓存
+  searchEngine: 'bing',
+  theme: 'light',
+  quickSites: [],
+  quickAccessRows: 2,
+  enableSuggestions: true,
+  enableIconAutoCache: true,
+  enableWeather: true,
+  weatherCity: 'auto'
 };
 
 /**

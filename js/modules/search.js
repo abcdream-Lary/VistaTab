@@ -93,7 +93,6 @@ export class SearchManager {
   this.suggestionContainer = document.createElement('div');
   this.suggestionContainer.className = 'suggestion-container';
   this.suggestionContainer.id = 'searchSuggestions';
-  this.suggestionContainer.style.display = 'none';
   this.suggestionContainer.style.position = 'absolute';
   this.suggestionContainer.style.width = '100%';
   this.suggestionContainer.style.top = '100%';
@@ -412,8 +411,8 @@ handleInput() {
       this.suggestionContainer.appendChild(item);
     });
     
-    // 显示建议容器
-    this.suggestionContainer.style.display = 'block';
+    // 显示建议容器，使用CSS类触发动画
+    this.suggestionContainer.classList.add('show');
   }
   
   /**
@@ -421,7 +420,7 @@ handleInput() {
    */
   hideSuggestions() {
     if (this.suggestionContainer) {
-      this.suggestionContainer.style.display = 'none';
+      this.suggestionContainer.classList.remove('show');
     }
   }
   

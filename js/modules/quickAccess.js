@@ -482,59 +482,14 @@ export class QuickAccessManager {
     const items = this.quickAccessGrid.children;
     const itemCount = items.length;
     
-    // 计算当前行的网站数量
     const maxSitesPerRow = 10;
     
-    // 计算行数
     const rows = Math.ceil(itemCount / maxSitesPerRow);
     
-    // 根据行数设置不同的类名
     if (rows > 2) {
-      // 超过2行，添加multi-row类
       document.body.classList.add('multi-row');
     } else {
-      // 2行或更少，移除multi-row类
       document.body.classList.remove('multi-row');
-    }
-    
-    // 如果总数小于一行的最大数量，则居中显示
-    if (itemCount <= maxSitesPerRow) {
-      // 使用自动网格布局使其居中
-      const gridTemplateColumns = `repeat(${itemCount}, 65px)`;
-      this.quickAccessGrid.style.gridTemplateColumns = gridTemplateColumns;
-      this.quickAccessGrid.style.justifyContent = 'center';
-      
-      // 添加样式使网站居中
-      this.quickAccessGrid.style.display = 'grid';
-      this.quickAccessGrid.style.width = 'fit-content';
-      this.quickAccessGrid.style.margin = '0 auto';
-    } else {
-      // 如果超过一行，始终使用标准10列布局
-      this.quickAccessGrid.style.gridTemplateColumns = 'repeat(10, 65px)';
-      this.quickAccessGrid.style.justifyContent = 'center';
-      this.quickAccessGrid.style.width = '100%';
-      
-      // 如果最后一行不满，添加空白项使其对齐
-      const lastRowItems = itemCount % maxSitesPerRow;
-      if (lastRowItems > 0 && lastRowItems < maxSitesPerRow) {
-        const emptyItemsNeeded = maxSitesPerRow - lastRowItems;
-        
-        // 移除之前可能添加的空白项
-        const existingEmptyItems = this.quickAccessGrid.querySelectorAll('.empty-grid-item');
-        existingEmptyItems.forEach(item => item.remove());
-        
-        // 添加新的空白项
-        for (let i = 0; i < emptyItemsNeeded; i++) {
-          const emptyItem = document.createElement('div');
-          emptyItem.className = 'quick-access-item empty-grid-item';
-          emptyItem.style.visibility = 'hidden';
-          this.quickAccessGrid.appendChild(emptyItem);
-        }
-      } else {
-        // 如果是满行，移除所有空白项
-        const existingEmptyItems = this.quickAccessGrid.querySelectorAll('.empty-grid-item');
-        existingEmptyItems.forEach(item => item.remove());
-      }
     }
   }
 

@@ -212,3 +212,26 @@ export function throttle(func, limit) {
     }
   };
 }
+
+/**
+ * 带重试的异步函数执行
+ * 如果函数执行失败，会自动重试指定次数
+ *
+ * @param {Function} asyncFn - 异步函数
+ * @param {number} retries - 重试次数（默认3次）
+ * @param {number} delay - 重试间隔（毫秒，默认1000ms）
+ * @returns {Promise<*>} 函数执行结果
+ */
+export async function retryAsync(asyncFn, retries = 3, delay = 1000) {
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      return await asyncFn();
+    } catch (error) {
+      console.warn(`操作失败 (尝试 ${attempt}/${retries}):`, error.message);
+      if (attempt === retries) {
+        throw new Error(`操作失败，已重试${retries}次: ${error.message}`);
+      }
+      await new Promise(resolve => setTimeout(resolve, delay * attempt));
+    }
+  }
+}

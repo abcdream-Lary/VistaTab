@@ -8,12 +8,35 @@
 </head>
 <body>
   <div class="container">
-    <!-- 设置按钮 - 右上角 -->
-    <div class="settings-icon">
-      <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="12" cy="12" r="3"></circle>
-        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
-      </svg>
+    <!-- 右上角控制区域 - 天气和设置 -->
+    <div class="top-right-controls">
+      <!-- 天气显示 -->
+      <div class="weather-widget" id="weatherWidget" title="点击跳转至微软天气">
+        <div class="weather-icon" id="weatherIcon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="14" cy="14" r="5"/>
+            <path d="M14 2v2"/>
+            <path d="m6 4-1.5 1.5"/>
+            <path d="m18 4 1.5 1.5"/>
+            <path d="M2 14h2"/>
+            <path d="M20 14h2"/>
+          </svg>
+        </div>
+        <div class="weather-info">
+          <span class="weather-temp" id="weatherTemp">--°</span>
+          <span class="weather-desc" id="weatherDesc">加载中...</span>
+        </div>
+        <div class="weather-loading" id="weatherLoading">
+          <div class="loading-spinner"></div>
+        </div>
+      </div>
+      <!-- 设置按钮 -->
+      <div class="settings-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"></circle>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+        </svg>
+      </div>
     </div>
 
     <!-- 主要内容 -->
@@ -53,129 +76,243 @@
         <h2>页面设置</h2>
         <button id="closeSettings">×</button>
       </div>
+      <!-- 设置导航栏 -->
+      <div class="settings-nav">
+        <button class="settings-nav-item active" data-tab="search">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <span>搜索</span>
+        </button>
+        <button class="settings-nav-item" data-tab="appearance">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M12 2a10 10 0 0 1 0 20z" fill="currentColor" opacity="0.2"></path>
+          </svg>
+          <span>外观</span>
+        </button>
+        <button class="settings-nav-item" data-tab="websites">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+          </svg>
+          <span>网站</span>
+        </button>
+        <button class="settings-nav-item" data-tab="data">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="17 8 12 3 7 8"></polyline>
+            <line x1="12" y1="3" x2="12" y2="15"></line>
+          </svg>
+          <span>数据</span>
+        </button>
+      </div>
       <div class="settings-body">
-        <div class="settings-section">
-          <h3>搜索引擎</h3>
-          <div class="setting-group">
-            <div class="setting-row">
-              <span class="setting-name">默认搜索引擎</span>
-              <div class="custom-dropdown" id="engineDropdown">
-                <div class="selected-option">Bing</div>
-                <div class="dropdown-options">
-                  <div class="dropdown-option" data-value="bing">Bing</div>
-                  <div class="dropdown-option" data-value="google">Google</div>
-                  <div class="dropdown-option" data-value="baidu">百度</div>
-                  <div class="dropdown-option" data-value="duckduckgo">DuckDuckGo</div>
-                  <div class="dropdown-option" data-value="sogou">搜狗</div>
-                  <div class="dropdown-option" data-value="ecosia">Ecosia</div>
-                  <div class="dropdown-option" data-value="qwant">Qwant</div>
-                  <div class="dropdown-option" data-value="startpage">Startpage</div>
+        <!-- 搜索设置 -->
+        <div class="settings-tab" id="tab-search">
+          <div class="settings-section">
+            <h3>搜索引擎</h3>
+            <div class="setting-group">
+              <div class="setting-row">
+                <span class="setting-name">默认搜索引擎</span>
+                <div class="custom-dropdown" id="engineDropdown">
+                  <div class="selected-option">Bing</div>
+                  <div class="dropdown-options">
+                    <div class="dropdown-option" data-value="bing">Bing</div>
+                    <div class="dropdown-option" data-value="google">Google</div>
+                    <div class="dropdown-option" data-value="baidu">百度</div>
+                    <div class="dropdown-option" data-value="duckduckgo">DuckDuckGo</div>
+                    <div class="dropdown-option" data-value="sogou">搜狗</div>
+                    <div class="dropdown-option" data-value="ecosia">Ecosia</div>
+                    <div class="dropdown-option" data-value="qwant">Qwant</div>
+                    <div class="dropdown-option" data-value="startpage">Startpage</div>
+                  </div>
+                  <select id="searchEngine" style="display: none;">
+                    <option value="bing" selected>Bing</option>
+                    <option value="google">Google</option>
+                    <option value="baidu">百度</option>
+                    <option value="duckduckgo">DuckDuckGo</option>
+                    <option value="sogou">搜狗</option>
+                    <option value="ecosia">Ecosia</option>
+                    <option value="qwant">Qwant</option>
+                    <option value="startpage">Startpage</option>
+                  </select>
                 </div>
-                <select id="searchEngine" style="display: none;">
-                  <option value="bing" selected>Bing</option>
-                  <option value="google">Google</option>
-                  <option value="baidu">百度</option>
-                  <option value="duckduckgo">DuckDuckGo</option>
-                  <option value="sogou">搜狗</option>
-                  <option value="ecosia">Ecosia</option>
-                  <option value="qwant">Qwant</option>
-                  <option value="startpage">Startpage</option>
-                </select>
               </div>
-            </div>
-            <div class="setting-row">
-              <span class="setting-name">搜索自动补全</span>
-              <label class="switch">
-                <input type="checkbox" id="enableSuggestions" checked>
-                <span class="slider"></span>
-              </label>
-            </div>
-          </div>
-        </div>
-        
-        <div class="settings-section">
-          <h3>主题设置</h3>
-          <div class="setting-group">
-            <div class="theme-options">
-              <div class="theme-option" data-theme="light">
-                <div class="theme-preview light-theme"></div>
-                <div class="theme-name">浅色</div>
-              </div>
-              <div class="theme-option" data-theme="dark">
-                <div class="theme-preview dark-theme"></div>
-                <div class="theme-name">深色</div>
-              </div>
-              <div class="theme-option" data-theme="blue">
-                <div class="theme-preview blue-theme"></div>
-                <div class="theme-name">蓝色</div>
-              </div>
-              <div class="theme-option" data-theme="green">
-                <div class="theme-preview green-theme"></div>
-                <div class="theme-name">绿色</div>
+              <div class="setting-row">
+                <span class="setting-name">搜索自动补全</span>
+                <label class="switch">
+                  <input type="checkbox" id="enableSuggestions" checked>
+                  <span class="slider"></span>
+                </label>
               </div>
             </div>
           </div>
         </div>
         
-        <div class="settings-section">
-          <h3>常用网站</h3>
-          <div class="setting-group">
-            <div class="setting-row">
-              <span class="setting-name">显示行数</span>
-              <div class="custom-dropdown" id="rowsDropdown">
-                <div class="selected-option">2行</div>
-                <div class="dropdown-options">
-                  <div class="dropdown-option" data-value="1">1</div>
-                  <div class="dropdown-option" data-value="2">2</div>
-                  <div class="dropdown-option" data-value="3">3</div>
-                  <div class="dropdown-option" data-value="4">4</div>
+        <!-- 外观设置 -->
+        <div class="settings-tab" id="tab-appearance" style="display: none;">
+          <div class="settings-section">
+            <h3>主题设置</h3>
+            <div class="setting-group">
+              <div class="theme-options">
+                <div class="theme-option" data-theme="auto">
+                  <div class="theme-preview auto-theme"></div>
+                  <div class="theme-name">自动</div>
                 </div>
-                <select id="quickAccessRows" style="display: none;">
-                  <option value="1">1</option>
-                  <option value="2" selected>2</option>
-                  <option value="3">3</option>
-                  <option value="4">4</option>
-                </select>
+                <div class="theme-option" data-theme="light">
+                  <div class="theme-preview light-theme"></div>
+                  <div class="theme-name">浅色</div>
+                </div>
+                <div class="theme-option" data-theme="dark">
+                  <div class="theme-preview dark-theme"></div>
+                  <div class="theme-name">深色</div>
+                </div>
+                <div class="theme-option" data-theme="blue">
+                  <div class="theme-preview blue-theme"></div>
+                  <div class="theme-name">蓝色</div>
+                </div>
+                <div class="theme-option" data-theme="green">
+                  <div class="theme-preview green-theme"></div>
+                  <div class="theme-name">绿色</div>
+                </div>
+                <div class="theme-option" data-theme="purple">
+                  <div class="theme-preview purple-theme"></div>
+                  <div class="theme-name">紫色</div>
+                </div>
+                <div class="theme-option" data-theme="orange">
+                  <div class="theme-preview orange-theme"></div>
+                  <div class="theme-name">橙色</div>
+                </div>
+                <div class="theme-option" data-theme="pink">
+                  <div class="theme-preview pink-theme"></div>
+                  <div class="theme-name">粉色</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="settings-section">
+            <h3>天气设置</h3>
+            <div class="setting-group">
+              <div class="setting-row">
+                <span class="setting-name">显示天气</span>
+                <label class="switch">
+                  <input type="checkbox" id="enableWeather" checked>
+                  <span class="slider"></span>
+                </label>
+              </div>
+              <div class="setting-row">
+                <div class="setting-name-container">
+                  <span class="setting-name">天气城市</span>
+                  <small class="setting-desc">设置为自动获取则根据浏览器位置</small>
+                </div>
+                <div class="custom-dropdown" id="cityDropdown">
+                  <div class="selected-option">自动获取</div>
+                  <div class="dropdown-options">
+                    <div class="dropdown-option" data-value="auto">自动获取</div>
+                    <div class="dropdown-option" data-value="beijing">北京</div>
+                    <div class="dropdown-option" data-value="shanghai">上海</div>
+                    <div class="dropdown-option" data-value="guangzhou">广州</div>
+                    <div class="dropdown-option" data-value="shenzhen">深圳</div>
+                    <div class="dropdown-option" data-value="chengdu">成都</div>
+                    <div class="dropdown-option" data-value="hangzhou">杭州</div>
+                  </div>
+                  <select id="weatherCity" style="display: none;">
+                    <option value="auto" selected>自动获取</option>
+                    <option value="beijing">北京</option>
+                    <option value="shanghai">上海</option>
+                    <option value="guangzhou">广州</option>
+                    <option value="shenzhen">深圳</option>
+                    <option value="chengdu">成都</option>
+                    <option value="hangzhou">杭州</option>
+                  </select>
+                </div>
+              </div>
+              <div class="setting-row">
+                <div class="setting-name-container">
+                  <span class="setting-name">当前位置天气</span>
+                  <small class="setting-desc" id="weatherDetailText">加载中...</small>
+                </div>
               </div>
             </div>
           </div>
         </div>
         
-        <div class="settings-section">
-          <h3>数据管理</h3>
-          <div class="setting-group">
-            <div class="setting-row">
-              <div class="setting-name-container">
-                <span class="setting-name">导出常用网站</span>
-                <small class="setting-desc">将常用网站信息导出为JSON文件，方便备份和迁移</small>
+        <!-- 网站设置 -->
+        <div class="settings-tab" id="tab-websites" style="display: none;">
+          <div class="settings-section">
+            <h3>常用网站</h3>
+            <div class="setting-group">
+              <div class="setting-row">
+                <span class="setting-name">显示行数</span>
+                <div class="custom-dropdown" id="rowsDropdown">
+                  <div class="selected-option">2行</div>
+                  <div class="dropdown-options">
+                    <div class="dropdown-option" data-value="1">1</div>
+                    <div class="dropdown-option" data-value="2">2</div>
+                    <div class="dropdown-option" data-value="3">3</div>
+                    <div class="dropdown-option" data-value="4">4</div>
+                  </div>
+                  <select id="quickAccessRows" style="display: none;">
+                    <option value="1">1</option>
+                    <option value="2" selected>2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                  </select>
+                </div>
               </div>
-              <button id="exportSites" class="btn btn-refresh">导出</button>
-            </div>
-            <div class="setting-row">
-              <div class="setting-name-container">
-                <span class="setting-name">导入常用网站</span>
-                <small class="setting-desc">从JSON文件导入常用网站信息，会替换当前的网站列表</small>
-              </div>
-              <div class="import-container">
-                <input type="file" id="importSites" accept=".json" style="display: none;">
-                <button id="importSitesBtn" class="btn btn-refresh">导入</button>
+              <div class="setting-row">
+                <div class="setting-name-container">
+                  <span class="setting-name">刷新所有网站图标</span>
+                  <small class="setting-desc">如果网站图标显示不正常，点击刷新按钮重新获取所有图标</small>
+                </div>
+                <button id="refreshIcons" class="btn btn-refresh">刷新</button>
               </div>
             </div>
           </div>
         </div>
+        
+        <!-- 数据管理 -->
+        <div class="settings-tab" id="tab-data" style="display: none;">
+          <div class="settings-section">
+            <h3>数据管理</h3>
+            <div class="setting-group">
+              <div class="setting-row">
+                <div class="setting-name-container">
+                  <span class="setting-name">导出常用网站</span>
+                  <small class="setting-desc">将常用网站信息导出为JSON文件，方便备份和迁移</small>
+                </div>
+                <button id="exportSites" class="btn btn-refresh">导出</button>
+              </div>
+              <div class="setting-row">
+                <div class="setting-name-container">
+                  <span class="setting-name">导入常用网站</span>
+                  <small class="setting-desc">从JSON文件导入常用网站信息，会替换当前的网站列表</small>
+                </div>
+                <div class="import-container">
+                  <input type="file" id="importSites" accept=".json" style="display: none;">
+                  <button id="importSitesBtn" class="btn btn-refresh">导入</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
-        <div class="settings-section">
-          <h3>图标管理</h3>
-          <div class="setting-group">
-            <div class="setting-row">
-              <div class="setting-name-container">
-                <span class="setting-name">刷新所有网站图标</span>
-                <small class="setting-desc">如果网站图标显示不正常，点击刷新按钮重新获取所有图标</small>
-              </div>
-              <button id="refreshIcons" class="btn btn-refresh">刷新</button>
-            </div>
-          </div>
+      <!-- 项目关于 - 固定在底部 -->
+      <div class="settings-about">
+        <div class="about-info">
+          <span class="setting-name">关于 VistaTab</span>
+          <small class="setting-desc">开源浏览器新标签页扩展</small>
         </div>
+        <a href="https://github.com/abcdream-Lary/VistaTab.git" target="_blank" rel="noopener noreferrer" class="github-link">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+          </svg>
+          GitHub
+        </a>
       </div>
     </div>
   </div>

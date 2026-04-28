@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "VistaTab",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "简约的新标签页",
   "icons": {
     "16": "icons/icons_16.png",
@@ -19,9 +19,11 @@
     "newtab": "newtab.html"
   },
   "permissions": [
-    "storage"
+    "storage",
+    "theme"
   ],
   "host_permissions": [
-    "https://suggestion.baidu.com/*"
+    "https://suggestion.baidu.com/*",
+    "https://wttr.in/*"
   ]
 }

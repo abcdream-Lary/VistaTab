@@ -14,6 +14,7 @@ import { SearchManager } from './modules/search.js';
 import { QuickAccessManager } from './modules/quickAccess.js';
 import { SettingsManager } from './modules/settings.js';
 import { ModalManager } from './modules/modals.js';
+import { WeatherManager } from './modules/weather.js';
 import { showMessage } from './modules/utils.js';
 
 /**
@@ -26,12 +27,12 @@ class VistaTabApp {
    * 先把所有模块的引用都初始化为null
    */
   constructor() {
-    // 各个功能模块的实例
-    this.storageManager = null;      // 负责数据存储
-    this.searchManager = null;       // 负责搜索功能
-    this.quickAccessManager = null;  // 负责快捷网站管理
-    this.settingsManager = null;     // 负责设置界面
-    this.modalManager = null;        // 负责弹窗效果
+    this.storageManager = null;
+    this.searchManager = null;
+    this.quickAccessManager = null;
+    this.settingsManager = null;
+    this.modalManager = null;
+    this.weatherManager = null;
   }
 
   /**
@@ -51,15 +52,19 @@ class VistaTabApp {
       this.searchManager = new SearchManager(this.storageManager);
       this.settingsManager = new SettingsManager(this.storageManager, this.quickAccessManager);
       this.modalManager = new ModalManager(this.storageManager, this.quickAccessManager);
+      this.weatherManager = new WeatherManager();
 
-      // 第四步：让各个模块开始工作
-      this.quickAccessManager.init();  // 显示快捷网站
-      this.searchManager.init();       // 启用搜索框
-      this.settingsManager.init();     // 设置面板准备就绪
-      this.modalManager.init();        // 弹窗功能准备就绪
+      this.quickAccessManager.init();
+      this.searchManager.init();
+      this.settingsManager.init();
+      this.modalManager.init();
+      await this.weatherManager.init(this.storageManager);
 
       // 第五步：绑定全局事件和快捷键
       this.bindGlobalEvents();
+      
+      // 第六步：启动存储空间监控
+      this.startStorageMonitor();
       
       console.log('VistaTab 启动完成 👌');
 
@@ -68,6 +73,24 @@ class VistaTabApp {
       console.error('启动出错啦:', error);
       showMessage('启动失败，请刷新重试', 'error');
     }
+  }
+
+  /**
+   * 启动存储空间监控
+   * 定期检查存储使用情况，接近限制时发出警告
+   */
+  startStorageMonitor() {
+    // 初始化后检查一次
+    this.storageManager.checkStorageUsage().then(({ used, quota, percentage }) => {
+      console.log(`💾 存储使用: ${percentage}% (${used} bytes / ${quota} bytes)`);
+    });
+
+    // 每30分钟检查一次
+    setInterval(() => {
+      this.storageManager.checkStorageUsage().then(({ used, quota, percentage }) => {
+        console.log(`💾 存储使用: ${percentage}% (${used} bytes / ${quota} bytes)`);
+      });
+    }, 30 * 60 * 1000);
   }
 
   /**
